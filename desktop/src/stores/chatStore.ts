@@ -4,6 +4,7 @@ import { sessionsApi } from '../api/sessions'
 import { useTeamStore } from './teamStore'
 import { useSessionStore } from './sessionStore'
 import { useCLITaskStore } from './cliTaskStore'
+import { useTabStore } from './tabStore'
 import { randomSpinnerVerb } from '../config/spinnerVerbs'
 import type { MessageEntry } from '../types/session'
 import type { PermissionMode } from '../types/settings'
@@ -271,6 +272,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             update(() => ({ elapsedTimer: null }))
           }
         }
+        // Sync tab status
+        useTabStore.getState().updateTabStatus(sessionId, msg.state === 'idle' ? 'idle' : 'running')
         break
 
       case 'content_start': {
@@ -390,6 +393,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           messages: [...s.messages, { id: nextId(), type: 'error', message: msg.message, code: msg.code, timestamp: Date.now() }],
           chatState: 'idle', activeThinkingId: null,
         }))
+        useTabStore.getState().updateTabStatus(sessionId, 'error')
         {
           const session = get().sessions[sessionId]
           if (session?.elapsedTimer) {
@@ -412,6 +416,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         break
       case 'session_title_updated':
         useSessionStore.getState().updateSessionTitle(msg.sessionId, msg.title)
+        useTabStore.getState().updateTabTitle(msg.sessionId, msg.title)
         break
       case 'system_notification':
         if (msg.subtype === 'slash_commands' && Array.isArray(msg.data)) {
