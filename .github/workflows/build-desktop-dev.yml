@@ -167,14 +167,14 @@ jobs:
 
           echo "Searching for artifacts in: $SEARCH_DIR"
           if [ -d "$SEARCH_DIR" ]; then
-            find "$SEARCH_DIR" -type f \( \
-              -name "*.dmg" -o -name "*.app" -o \
-              -name "*.exe" -o -name "*.msi" -o \
-              -name "*.deb" -o -name "*.AppImage" -o \
-              -name "*.zip" \
-            \) | while read -r f; do
+            find "$SEARCH_DIR" \
+              \( -type f \( \
+                -name "*.dmg" -o -name "*.exe" -o -name "*.msi" -o \
+                -name "*.deb" -o -name "*.AppImage" -o -name "*.zip" \
+              \) \) -o \
+              \( -type d -name "*.app" \) | while read -r f; do
               echo "  Copying: $(basename "$f")"
-              cp "$f" "$STAGING/"
+              cp -R "$f" "$STAGING/"
             done
           fi
 

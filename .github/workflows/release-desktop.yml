@@ -80,7 +80,8 @@ jobs:
             libwebkit2gtk-4.1-dev \
             libayatana-appindicator3-dev \
             librsvg2-dev \
-            patchelf
+            patchelf \
+            libfuse2
 
       # ── Bun ──────────────────────────────────────────────────
       - name: Setup Bun
